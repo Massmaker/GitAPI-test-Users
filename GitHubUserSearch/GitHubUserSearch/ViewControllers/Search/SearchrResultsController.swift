@@ -23,6 +23,8 @@ class SearchrResultsController: UIViewController, UITableViewDataSource, UITable
       aView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
       aView.widthAnchor.constraint(equalToConstant:100.0).isActive = true
       aView.heightAnchor.constraint(equalToConstant:100.0).isActive = true
+      aView.backgroundColor = UIColor.gray.withAlphaComponent(0.5)
+      aView.layer.cornerRadius = 4.0
       aView.alpha = 0.0
       
       return aView
