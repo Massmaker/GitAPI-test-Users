@@ -15,6 +15,8 @@ class Model {
       return (UIApplication.shared.delegate as! AppDelegate).model
    }
    
+   //search
+   
    var totalResultsCount:Int64 = 0
    lazy var searchResults:[UserData] = [UserData]()
    var currentPage = 1
@@ -28,6 +30,10 @@ class Model {
    var hasMoreUsersToLoad:Bool {
       return currentNumberOfUsersFound < totalResultsCount
    }
+   
+   //user
+   var currentUser:UserData?
+   lazy var repositories:[RepositoryData] = [RepositoryData]()
    
    //MARK: -
    func searchForUser(name:String, completion:(()->())? ) {
@@ -80,6 +86,20 @@ struct UserData:Decodable {
    var userProfilePageUrlString:String? {
       return url
    }
+}
+
+struct RepositoryData:Decodable {
+   var isPrivate:Bool = false
+   var name:String?
+   var description:String?
+   var html_url:String?
+   //TODO:  encode "private" field from JSON to isPrivate Bool
+//   public init(from decoder: Decoder) throws {
+//      if let aPrivateKey = CodingKey(stringValue: "private") {
+//         let try decoder.container(keyedBy: aPrivateKey)
+//      }
+//      //let aPrivate = decoder.codingPath[CodingKey(stringVelue:"private")]
+//   }
 }
 
 enum RequestError:Error {

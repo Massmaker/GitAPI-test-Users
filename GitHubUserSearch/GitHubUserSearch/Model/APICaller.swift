@@ -13,9 +13,11 @@ typealias searchCompletionBlock = (_ searchResult:SearchResultResponse)->()
 
 class APICaller {
    static let apiAdress = "https://api.github.com/search/users"
+   static let repositoriesAdress = "https://api.github.com/users/<USERNAME>/repos?page=<NumberOfPage>&per_page=10"
    
    static let jsonDecoder = JSONDecoder()
    var currentResultsPage = 1
+   var currentRepositoriesPage = 1
    
    func searchForUser(name:String, completion:@escaping searchCompletionBlock) {
       
