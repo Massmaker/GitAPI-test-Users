@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EFA03C2E202785010003C246 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFA03C2D202785010003C246 /* Constants.swift */; };
 		EFABD4C720224C3C00D4481E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFABD4C620224C3C00D4481E /* AppDelegate.swift */; };
 		EFABD4CC20224C3C00D4481E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EFABD4CA20224C3C00D4481E /* Main.storyboard */; };
 		EFABD4CE20224C3C00D4481E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EFABD4CD20224C3C00D4481E /* Assets.xcassets */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EFA03C2D202785010003C246 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		EFABD4C320224C3C00D4481E /* GitHubUserSearch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GitHubUserSearch.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFABD4C620224C3C00D4481E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EFABD4CB20224C3C00D4481E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				EFABD4EB20227AF000D4481E /* MainThreadAndSafety.swift */,
+				EFA03C2D202785010003C246 /* Constants.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -192,6 +195,7 @@
 				EFABD4C720224C3C00D4481E /* AppDelegate.swift in Sources */,
 				EFABD4EC20227AF000D4481E /* MainThreadAndSafety.swift in Sources */,
 				EFABD4E22022502000D4481E /* DetailsViewController.swift in Sources */,
+				EFA03C2E202785010003C246 /* Constants.swift in Sources */,
 				EFABD4E92022631F00D4481E /* APICaller.swift in Sources */,
 				EFABD4E720225F9500D4481E /* Model.swift in Sources */,
 			);

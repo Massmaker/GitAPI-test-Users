@@ -52,13 +52,18 @@ class SearchrResultsController: UIViewController, UITableViewDataSource, UITable
       tableView.keyboardDismissMode = .onDrag
     }
 
+   override func viewWillDisappear(_ animated: Bool) {
+      searchController?.isActive = false
+      super.viewWillDisappear(animated)
+   }
+   
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-      model.cleanSearchResults()
+      model.didReceiveMemoryWarning()
       self.tableView.reloadData()
       self.searchController?.isActive = false
-    }
+   }
 
     // MARK: - UITableViewDatasource
 
@@ -109,6 +114,10 @@ class SearchrResultsController: UIViewController, UITableViewDataSource, UITable
       tableView.deselectRow(at: indexPath, animated: true)
       
       //TODO: implement transfering to User Details view controller
+      if let aUser = model.searchResults[safe: indexPath.row] {
+         model.currentUser = aUser
+         self.performSegue(withIdentifier: segueToDetails, sender: nil)
+      }
    }
    
    //MARK: -
