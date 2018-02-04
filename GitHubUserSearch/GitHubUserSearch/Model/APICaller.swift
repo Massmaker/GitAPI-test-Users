@@ -13,17 +13,19 @@ typealias searchCompletionBlock = (_ searchResult:SearchResultResponse)->()
 
 typealias imageDownloadBlock = (_ image:UIImage?, _ error:Error?) -> ()
 
-typealias repositoriesDownloadBlock = (_ repos:[RepositoryData], _ error:Error?) -> ()
+typealias repositoriesDownloadBlock = (_ repos:[RepositoryData]?, _ error:Error?) -> ()
 
 class APICaller {
    static let apiAdress = "https://api.github.com/search/users"
-   static let repositoriesAdress = "https://api.github.com/users/<USERNAME>/repos?page=<NumberOfPage>&per_page=10"
+   static let repositoriesAdress = "https://api.github.com/users/<USERNAME>/repos?page=<NUMBER_OF_PAGE>&per_page=20"
    
    static let jsonDecoder = JSONDecoder()
    var currentResultsPage = 1
    var currentRepositoriesPage = 1
+   
    var currentUserSearchTask:URLSessionDataTask?
    var currentAvatarLoadingTask:URLSessionDataTask?
+   var currentRepositoriesLoadingTask:URLSessionDataTask?
    
    //MARK: - Methods
    //----------------
@@ -116,6 +118,42 @@ class APICaller {
    
    //------
    func searchForRepositoriesOf(_ userName:String, completion:repositoriesDownloadBlock?) {
+      //repositoriesAdress
+      let userRepositiryAddress = APICaller.repositoriesAdress.replacingOccurrences(of: "<USERNAME>", with: userName).replacingOccurrences(of: "<NUMBER_OF_PAGE>", with: "\(currentRepositoriesPage)")
       
+      guard let reposURL = URL(string:userRepositiryAddress) else {
+         completion?(nil, RequestError.badURLFormat(message: "Could not create URL with username\" \(userName) \""))
+         return
+      }
+      
+      currentRepositoriesLoadingTask?.cancel()
+      
+      currentRepositoriesLoadingTask = URLSession.shared.dataTask(with: reposURL, completionHandler: { (data, response, error) in
+         if let reposData = data {
+            do{
+               let repos:[RepositoryData] = try APICaller.jsonDecoder.decode([RepositoryData].self, from: reposData)
+               performOnMainThreadAsync {
+                  completion?(repos, nil)
+               }
+            }
+            catch let tryError {
+               print(tryError)
+               performOnMainThreadAsync {
+                  completion?(nil, tryError)
+               }
+            }
+         }
+         else if let anError = error {
+            performOnMainThreadAsync {
+               completion?(nil, anError)
+            }
+         }
+         else {
+            performOnMainThreadAsync {
+               completion?(nil, RequestError.unknownError(message: "Unknown error while loading repository data."))
+            }
+         }
+      })
+      currentRepositoriesLoadingTask?.resume()
    }
 }

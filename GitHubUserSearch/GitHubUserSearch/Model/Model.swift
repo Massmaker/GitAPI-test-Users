@@ -90,7 +90,7 @@ class Model {
       }
       
       //----
-      if let anUrl = user.avatar_url {
+      if let anUrl = user.avatarURL {
          print("Loading avatar")
          self.apiCaller.loadUserAvatarOn(anUrl, completion: {[weak self] (image, error) in
             print("Loading avatar finished")
@@ -109,7 +109,9 @@ class Model {
       }
    }
    
-   
+   func getCurrentUserRepositories(completion:repositoriesDownloadBlock?) {
+      apiCaller.searchForRepositoriesOf(currentUser!.login!, completion: completion)
+   }
 }
 
 //MARK: -
@@ -126,11 +128,14 @@ struct SearchResultResponse:Decodable {
 struct UserData:Decodable {
    let login:String?
    let id:Int?
-   let avatar_url:String?
-   let url:String?
-   
-   var userProfilePageUrlString:String? {
-      return url
+   let avatarURL:String?
+   let userProfilePageURLString:String?
+   //custon coding key need to be declared in enum
+   private enum CodingKeys:String, CodingKey {
+      case login
+      case id
+      case avatarURL = "avatar_url"
+      case userProfilePageURLString = "url"
    }
 }
 

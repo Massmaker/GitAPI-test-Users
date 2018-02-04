@@ -17,6 +17,7 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
    @IBOutlet weak var ibAavatar:UIImageView!
    @IBOutlet weak var ibAvatarLoadingIndicator:UIActivityIndicatorView!
    @IBOutlet weak var ibUserId: UILabel!
+   @IBOutlet weak var ibUserProfileURL:UILabel!
    @IBOutlet weak var ibRepositoriesListTableView: UITableView!
    
    static let repositoryCellReuseIdentifier = "RepositoryCell"
@@ -38,7 +39,7 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
    
    override func viewWillAppear(_ animated: Bool) {
       super.viewWillAppear(animated)
-      
+      ibRepositoriesListTableView.isHidden = true
       ibAvatarLoadingIndicator.stopAnimating()
       
       if let aUser = model.currentUser {
@@ -51,6 +52,7 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
          }
          
          ibNickName.text = aUser.login
+         ibUserProfileURL.text = aUser.userProfilePageURLString
          
          ibAvatarLoadingIndicator.startAnimating()
          model.getAvatarForUser(aUser, completion: { [weak self] (image, error) in
@@ -61,6 +63,12 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
                   self.displayErrorAlertWith(anError)
                }
             }
+         })
+         
+         model.getCurrentUserRepositories(completion: { (repositories, error) in
+            print(repositories!)
+            self.ibRepositoriesListTableView.isHidden = false
+            self.ibRepositoriesListTableView.reloadData()
          })
       }
    }
@@ -89,9 +97,13 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
    }
    
    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-      let aCell = tableView.dequeueReusableCell(withIdentifier: DetailsViewController.repositoryCellReuseIdentifier, for: indexPath)
-      
-      return aCell
+      if let aCell = tableView.dequeueReusableCell(withIdentifier: DetailsViewController.repositoryCellReuseIdentifier, for: indexPath) as? RepositoriesListTableViewCell {
+         aCell.repository = model.repositories[safe:indexPath.row]
+         return aCell
+      }
+      else {
+         return UITableViewCell(style: .default, reuseIdentifier: "Cell")
+      }
    }
    
    //view controller end
