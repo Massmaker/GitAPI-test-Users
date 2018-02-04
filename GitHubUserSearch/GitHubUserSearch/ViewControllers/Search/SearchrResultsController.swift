@@ -52,15 +52,20 @@ class SearchrResultsController: UIViewController, UITableViewDataSource, UITable
       tableView.keyboardDismissMode = .onDrag
     }
 
+   override func viewWillDisappear(_ animated: Bool) {
+      searchController?.isActive = false
+      super.viewWillDisappear(animated)
+   }
+   
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-      model.cleanSearchResults()
+      model.didReceiveMemoryWarning()
       self.tableView.reloadData()
       self.searchController?.isActive = false
-    }
+   }
 
-    // MARK: - Table view data source
+    // MARK: - UITableViewDatasource
 
     func numberOfSections(in tableView: UITableView) -> Int {
         // #warning Incomplete implementation, return the number of sections
@@ -84,6 +89,8 @@ class SearchrResultsController: UIViewController, UITableViewDataSource, UITable
     }
     
 
+   //MARK: - UITableViewDelegate
+   
    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
       let count = model.currentNumberOfUsersFound
       if indexPath.row == count - 1, model.hasMoreUsersToLoad {
@@ -103,6 +110,17 @@ class SearchrResultsController: UIViewController, UITableViewDataSource, UITable
       }
    }
    
+   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+      tableView.deselectRow(at: indexPath, animated: true)
+      
+      //TODO: implement transfering to User Details view controller
+      if let aUser = model.searchResults[safe: indexPath.row] {
+         model.currentUser = aUser
+         self.performSegue(withIdentifier: segueToDetails, sender: nil)
+      }
+   }
+   
+   //MARK: -
    private func setLoading(_ loading:Bool) {
       if (loading) {
          self.tableView.isUserInteractionEnabled = false
@@ -114,7 +132,7 @@ class SearchrResultsController: UIViewController, UITableViewDataSource, UITable
       }
    }
    
-   func displayLoadingIndicator(_ display:Bool) {
+   private func displayLoadingIndicator(_ display:Bool) {
       if (display) {
          self.view.bringSubview(toFront: activityIndicator)
          
@@ -132,9 +150,11 @@ class SearchrResultsController: UIViewController, UITableViewDataSource, UITable
          })
       }
    }
+   //MARK: -
 }
 
 extension SearchrResultsController:UISearchResultsUpdating {
+   
    func updateSearchResults(for searchController: UISearchController) {
       if let aText = searchController.searchBar.text, aText.count > 3 {
          
