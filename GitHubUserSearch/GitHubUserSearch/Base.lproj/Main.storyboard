@@ -233,6 +233,7 @@
                         <outlet property="ibNickName" destination="RIV-RO-k8m" id="VJb-d7-ymM"/>
                         <outlet property="ibRepositoriesListTableView" destination="CLU-Bu-PgQ" id="9Hs-eA-tP3"/>
                         <outlet property="ibUserId" destination="5n3-WE-vzU" id="DA5-Pj-6cq"/>
+                        <outlet property="ibUserProfileURL" destination="5c2-fE-nNC" id="XmS-tc-Ad8"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ldy-gw-FHV" userLabel="First Responder" sceneMemberID="firstResponder"/>
