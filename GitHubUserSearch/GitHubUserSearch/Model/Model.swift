@@ -115,13 +115,13 @@ class Model {
 }
 
 //MARK: -
-struct SearchResultResponse:Decodable {
+struct UserSearchResultResponse:Decodable {
    let total_count:Int64?
    let incomplete_results:Bool?
    let items:[UserData]?
    
-   static func createEmpty() -> SearchResultResponse{
-      return SearchResultResponse(total_count: nil, incomplete_results: false, items: nil)
+   static func createEmpty() -> UserSearchResultResponse{
+      return UserSearchResultResponse(total_count: nil, incomplete_results: false, items: nil)
    }
 }
 

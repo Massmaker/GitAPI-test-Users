@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 
-typealias searchCompletionBlock = (_ searchResult:SearchResultResponse)->()
+typealias searchCompletionBlock = (_ searchResult:UserSearchResultResponse)->()
 
 typealias imageDownloadBlock = (_ image:UIImage?, _ error:Error?) -> ()
 
@@ -34,7 +34,7 @@ class APICaller {
       let requestAddress = APICaller.apiAdress + "?q=" + name.lowercased() + "&page=\(currentResultsPage)" + "&per_page=30"
       currentResultsPage += 1 //0 or 1 pages return the same values
       guard let url = URL(string:requestAddress) else {
-         let errorResponese = SearchResultResponse.createEmpty()
+         let errorResponese = UserSearchResultResponse.createEmpty()
          completion(errorResponese)
          return
       }
@@ -45,19 +45,19 @@ class APICaller {
       currentUserSearchTask = URLSession.shared.dataTask(with: url) { (responseData, response, error) in
          if let aData = responseData {
             do {
-               let responseResult:SearchResultResponse = try APICaller.jsonDecoder.decode(SearchResultResponse.self, from: aData)
+               let responseResult:UserSearchResultResponse = try APICaller.jsonDecoder.decode(UserSearchResultResponse.self, from: aData)
                
                   completion(responseResult)
                
             } catch let error as DecodingError{
                print(error)
-               let errorResponse = SearchResultResponse.createEmpty()
+               let errorResponse = UserSearchResultResponse.createEmpty()
                
                   completion(errorResponse)
                
             } catch let error {
               print(error)
-               let errorResponse = SearchResultResponse.createEmpty()
+               let errorResponse = UserSearchResultResponse.createEmpty()
                
                   completion(errorResponse)
                
