@@ -16,12 +16,14 @@ typealias imageDownloadBlock = (_ image:UIImage?, _ error:Error?) -> ()
 typealias repositoriesDownloadBlock = (_ repos:[RepositoryData]?, _ error:Error?) -> ()
 
 class APICaller {
-   static let apiAdress = "https://api.github.com/search/users"
-   static let repositoriesAdress = "https://api.github.com/users/<USERNAME>/repos?page=<NUMBER_OF_PAGE>&per_page=20"
+   
+   static let apiUsersAddress = "https://api.github.com/search/users"
+   
+   static let apiRepositoriesAddress = "https://api.github.com/users/<USERNAME>/repos"//?page=<NUMBER_OF_PAGE>&per_page=<USERS_PER_PAGE>"
    
    static let jsonDecoder = JSONDecoder()
-   var currentResultsPage = 1
-   var currentRepositoriesPage = 1
+   var usersPerPage = 20
+   //var currentRepositoriesPage = 1
    
    var currentUserSearchTask:URLSessionDataTask?
    var currentAvatarLoadingTask:URLSessionDataTask?
@@ -29,10 +31,12 @@ class APICaller {
    
    //MARK: - Methods
    //----------------
-   func searchForUser(name:String, completion:@escaping searchCompletionBlock) {
+   func searchForUser(name:String, page:Int, completion:@escaping searchCompletionBlock) {
       
-      let requestAddress = APICaller.apiAdress + "?q=" + name.lowercased() + "&page=\(currentResultsPage)" + "&per_page=30"
-      currentResultsPage += 1 //0 or 1 pages return the same values
+      let aPage = page + 1 //0 or 1 pages return the same values
+      
+      let requestAddress = APICaller.apiUsersAddress + "?q=" + name.lowercased() + "&page=\(aPage)" + "&per_page=\(usersPerPage)"
+      
       guard let url = URL(string:requestAddress) else {
          let errorResponese = UserSearchResultResponse.createEmpty()
          completion(errorResponese)
@@ -43,6 +47,7 @@ class APICaller {
       currentUserSearchTask = nil
       
       currentUserSearchTask = URLSession.shared.dataTask(with: url) { (responseData, response, error) in
+         print("current Users Page: \(aPage)")
          if let aData = responseData {
             do {
                let responseResult:UserSearchResultResponse = try APICaller.jsonDecoder.decode(UserSearchResultResponse.self, from: aData)
@@ -119,7 +124,7 @@ class APICaller {
    //------
    func searchForRepositoriesOf(_ userName:String, completion:repositoriesDownloadBlock?) {
       //repositoriesAdress
-      let userRepositiryAddress = APICaller.repositoriesAdress.replacingOccurrences(of: "<USERNAME>", with: userName).replacingOccurrences(of: "<NUMBER_OF_PAGE>", with: "\(currentRepositoriesPage)")
+      let userRepositiryAddress = APICaller.apiRepositoriesAddress.replacingOccurrences(of: "<USERNAME>", with: userName)//.replacingOccurrences(of: "<NUMBER_OF_PAGE>", with: "\(currentRepositoriesPage)")
       
       guard let reposURL = URL(string:userRepositiryAddress) else {
          completion?(nil, RequestError.badURLFormat(message: "Could not create URL with username\" \(userName) \""))

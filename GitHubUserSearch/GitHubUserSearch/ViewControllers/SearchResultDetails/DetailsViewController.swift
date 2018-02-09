@@ -10,7 +10,7 @@ import UIKit
 
 
 
-class DetailsViewController: UIViewController, UITableViewDataSource {
+class DetailsViewController: UIViewController {
    
    
    @IBOutlet weak var ibNickName: UILabel!
@@ -28,6 +28,7 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
    
    override func viewDidLoad() {
       super.viewDidLoad()
+      //ibRepositoriesListTableView?.register(RepositoriesListTableViewCell.self, forCellReuseIdentifier: DetailsViewController.repositoryCellReuseIdentifier)
       
       // Do any additional setup after loading the view.
    }
@@ -65,12 +66,18 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
             }
          })
          
-         model.getCurrentUserRepositories(completion: { (repositories, error) in
-            print(repositories!)
-            self.ibRepositoriesListTableView.isHidden = false
-            self.ibRepositoriesListTableView.reloadData()
+         model.getCurrentUserRepositories(completion: { [weak self] in
+            if let `self` = self {
+               self.ibRepositoriesListTableView.isHidden = false
+               self.ibRepositoriesListTableView.reloadData()
+            }
          })
       }
+   }
+   
+   override func viewWillDisappear(_ animated: Bool) {
+      super.viewWillDisappear(animated)
+      model.clearCurrentRepositories()
    }
    
    func displayErrorAlertWith(_ error:Error) {
@@ -91,12 +98,18 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
       
    }
    
+   //view controller end
+}
+
+extension DetailsViewController : UITableViewDataSource {
+   
    //MARK: - UITableViewDataSource
    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
       return model.repositories.count
    }
    
    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+      
       if let aCell = tableView.dequeueReusableCell(withIdentifier: DetailsViewController.repositoryCellReuseIdentifier, for: indexPath) as? RepositoriesListTableViewCell {
          aCell.repository = model.repositories[safe:indexPath.row]
          return aCell
@@ -105,6 +118,10 @@ class DetailsViewController: UIViewController, UITableViewDataSource {
          return UITableViewCell(style: .default, reuseIdentifier: "Cell")
       }
    }
-   
-   //view controller end
+}
+
+extension DetailsViewController : UITableViewDelegate {
+   func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+      
+   }
 }

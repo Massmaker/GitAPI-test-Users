@@ -18,7 +18,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="F40-vJ-eeQ">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" estimatedRowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="F40-vJ-eeQ">
                                 <rect key="frame" x="0.0" y="64" width="414" height="672"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
@@ -98,7 +98,7 @@
                                 <rect key="frame" x="48" y="114" width="37" height="37"/>
                                 <color key="color" red="1" green="0.14913141730000001" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </activityIndicatorView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="riR-Cr-YzD">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Name: " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="riR-Cr-YzD">
                                 <rect key="frame" x="131" y="84" width="50" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="50" id="IYS-kn-xlD"/>
@@ -107,7 +107,7 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ID:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VGL-02-yxI">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="ID:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="VGL-02-yxI">
                                 <rect key="frame" x="131" y="113" width="20" height="17"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="20" id="p83-u5-Pdm"/>
@@ -128,14 +128,14 @@
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="253" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="CLU-Bu-PgQ">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" horizontalHuggingPriority="252" verticalHuggingPriority="253" horizontalCompressionResistancePriority="752" verticalCompressionResistancePriority="752" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="CLU-Bu-PgQ">
                                 <rect key="frame" x="16" y="235" width="382" height="481"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="100" id="5AC-U6-MMs"/>
                                 </constraints>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="RepositoryCell" rowHeight="83" id="w7l-4F-UcB" customClass="RepositoriesListTableViewCell">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="RepositoryCell" rowHeight="83" id="w7l-4F-UcB" customClass="RepositoriesListTableViewCell" customModule="GitHubUserSearch" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="382" height="83"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="w7l-4F-UcB" id="FVN-Be-3l8">
@@ -174,13 +174,18 @@
                                                 <constraint firstItem="3d0-6J-3NO" firstAttribute="top" secondItem="FVN-Be-3l8" secondAttribute="top" id="tIe-To-hUG"/>
                                             </constraints>
                                         </tableViewCellContentView>
+                                        <color key="backgroundColor" red="0.0" green="0.6705882353" blue="0.6705882353" alpha="1" colorSpace="calibratedRGB"/>
                                         <connections>
-                                            <outlet property="ibDesciption" destination="GKr-3x-cnh" id="5f8-zy-dBV"/>
-                                            <outlet property="ibTitle" destination="3d0-6J-3NO" id="BlV-ad-aUc"/>
-                                            <outlet property="ibURLLabel" destination="Bqy-bs-FSZ" id="47t-VW-B6P"/>
+                                            <outlet property="ibDescription" destination="GKr-3x-cnh" id="Mbo-B8-PkI"/>
+                                            <outlet property="ibTitle" destination="3d0-6J-3NO" id="kHJ-Ah-Fti"/>
+                                            <outlet property="ibURLLabel" destination="Bqy-bs-FSZ" id="zfm-lb-OuZ"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
+                                <connections>
+                                    <outlet property="dataSource" destination="1rV-qH-OjE" id="dPE-2b-CVr"/>
+                                    <outlet property="delegate" destination="1rV-qH-OjE" id="8zN-lr-2X7"/>
+                                </connections>
                             </tableView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Repositories:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="N6k-gO-EFK">
                                 <rect key="frame" x="157.33333333333334" y="206" width="100.00000000000003" height="21"/>
