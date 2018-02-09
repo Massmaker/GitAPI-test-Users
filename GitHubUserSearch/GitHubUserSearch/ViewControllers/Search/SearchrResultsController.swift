@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SearchrResultsController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class SearchrResultsController: UIViewController {
 
    var searchController:UISearchController?
    @IBOutlet var tableView:UITableView!
@@ -52,6 +52,24 @@ class SearchrResultsController: UIViewController, UITableViewDataSource, UITable
       tableView.keyboardDismissMode = .onDrag
     }
 
+   
+   override func viewDidAppear(_ animated: Bool) {
+      super.viewDidAppear(animated)
+      setupPerPageResultsInModel()
+   }
+   
+   override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+      super.viewWillTransition(to: size, with: coordinator)
+      
+      coordinator.animate(alongsideTransition: { (context) in
+         self.displayLoadingIndicator(false)
+      }) { [weak self] (context) in
+         if let `self` = self {
+            self.setupPerPageResultsInModel()
+         }
+      }
+   }
+   
    override func viewWillDisappear(_ animated: Bool) {
       searchController?.isActive = false
       super.viewWillDisappear(animated)
@@ -65,62 +83,17 @@ class SearchrResultsController: UIViewController, UITableViewDataSource, UITable
       self.searchController?.isActive = false
    }
 
-    // MARK: - UITableViewDatasource
-
-    func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 1
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return Model.shared.currentNumberOfUsersFound
-    }
-
-   
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultCell", for: indexPath)
-
-      if let user = model.searchResults[safe: indexPath.row] {
-         cell.textLabel?.text = user.login ?? "<NAME>"
-         cell.detailTextLabel?.text = "\(user.id ?? -1)"
-      }
-        return cell
-    }
-    
-
-   //MARK: - UITableViewDelegate
-   
-   func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-      let count = model.currentNumberOfUsersFound
-      if indexPath.row == count - 1, model.hasMoreUsersToLoad {
-         self.setLoading(true)
-         model.currentPage += 1
-         model.searchForUser(name: model.currentSearchText, completion: {
-            var yOffset = self.tableView.contentOffset.y
-            yOffset += 40.0
-            self.tableView.setContentOffset(CGPoint(x:0, y:yOffset), animated: true)
-            
-            self.tableView.reloadData()//reloadSections(IndexSet(integer:0), with: UITableViewRowAnimation.bottom)
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(1), execute: {
-               self.setLoading(false)
-            })
-            //DispatchQueue.main.asyncAfter(deadline: .now + 1.0) { self.setLoading(false) }
-         })
-      }
-   }
-   
-   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-      tableView.deselectRow(at: indexPath, animated: true)
-      
-      //TODO: implement transfering to User Details view controller
-      if let aUser = model.searchResults[safe: indexPath.row] {
-         model.currentUser = aUser
-         self.performSegue(withIdentifier: segueToDetails, sender: nil)
-      }
-   }
    
    //MARK: -
+   
+   private func setupPerPageResultsInModel() {
+      tableView.setContentOffset(CGPoint.zero, animated: false)
+      let rowHeight = tableView.rowHeight
+      let frame = tableView.frame
+      let perPage = Int(ceil(frame.height / rowHeight)) + 1
+      model.setUserSearchResultsPerPage(perPage)
+   }
+   
    private func setLoading(_ loading:Bool) {
       if (loading) {
          self.tableView.isUserInteractionEnabled = false
@@ -153,6 +126,68 @@ class SearchrResultsController: UIViewController, UITableViewDataSource, UITable
    //MARK: -
 }
 
+extension SearchrResultsController : UITableViewDataSource {
+   
+   // MARK: - UITableViewDatasource
+   
+   func numberOfSections(in tableView: UITableView) -> Int {
+      // #warning Incomplete implementation, return the number of sections
+      return 1
+   }
+   
+   func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+      // #warning Incomplete implementation, return the number of rows
+      return Model.shared.currentNumberOfUsersFound
+   }
+   
+   
+   func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+      let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultCell", for: indexPath)
+      
+      if let user = model.currentSearchData.items?[safe: indexPath.row] {
+         cell.textLabel?.text = user.login ?? "<NAME>"
+         cell.detailTextLabel?.text = "\(user.id ?? -1)"
+      }
+      return cell
+   }
+}
+
+extension SearchrResultsController: UITableViewDelegate {
+   //MARK: - UITableViewDelegate
+   
+   func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+      let count = model.currentNumberOfUsersFound
+      if indexPath.row == count - 1, model.hasMoreUsersToLoad {
+         
+         self.setLoading(true)
+         
+         var insets = self.tableView.contentInset
+         insets.bottom = 60.0
+         tableView.contentInset = insets
+         
+         model.searchForUser(name: model.currentSearchText, completion: {
+            self.tableView.reloadData()//reloadSections(IndexSet(integer:0), with: UITableViewRowAnimation.bottom)
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .seconds(1), execute: {[weak self] in
+               if let `self` = self {
+                  self.tableView.contentInset = UIEdgeInsets.zero
+                  self.setLoading(false)
+               }
+            })
+         })
+      }
+   }
+   
+   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+      tableView.deselectRow(at: indexPath, animated: true)
+      
+      //TODO: implement transfering to User Details view controller
+      if let aUser = model.currentSearchData.items?[safe: indexPath.row] {
+         model.currentUser = aUser
+         self.performSegue(withIdentifier: segueToDetails, sender: nil)
+      }
+   }
+}
+
 extension SearchrResultsController:UISearchResultsUpdating {
    
    func updateSearchResults(for searchController: UISearchController) {
@@ -160,6 +195,8 @@ extension SearchrResultsController:UISearchResultsUpdating {
          
          print("searching : \(aText)")
          setLoading(true)
+         tableView.setContentOffset(CGPoint.zero, animated: false)
+         
          Model.shared.searchForUser(name: aText.lowercased(), completion: {[weak self] in
             guard let `self` = self else { return }
             
