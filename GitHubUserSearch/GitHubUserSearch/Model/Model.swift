@@ -17,17 +17,19 @@ class Model {
    
    //search
    
-   var totalResultsCount:Int64 = 0
-   lazy var searchResults:[UserData] = [UserData]()
+   var totalResultsCount:Int  {
+      return currentSearchData.total_count ?? 0
+   }
+   //lazy var searchResults:[UserData] = [UserData]()
+   lazy var currentSearchData:UserSearchResultResponse = UserSearchResultResponse.createEmpty()
    
    lazy var cache = NSCache<AnyObject, AnyObject>()
    
-   var currentPage = 1
    var currentSearchText = ""
    let apiCaller = APICaller()
    
    var currentNumberOfUsersFound:Int {
-      return self.searchResults.count
+      return self.currentSearchData.items?.count ?? 0
    }
    
    var hasMoreUsersToLoad:Bool {
@@ -46,18 +48,30 @@ class Model {
    }
    
    //MARK: -
+   func setUserSearchResultsPerPage(_ count:Int) {
+      apiCaller.usersPerPage = min(count, 40)
+   }
+   //MARK: -
    func searchForUser(name:String, completion:(()->())? ) {
       if currentSearchText != name {
          cleanUserSearchResults()
          currentSearchText = name
       }
       
-      apiCaller.searchForUser(name: currentSearchText) { (result) in
+      let currentCount = currentNumberOfUsersFound
+      var currentPage = 0
+      if currentCount > 0 {
+         currentPage = currentCount / apiCaller.usersPerPage
+      }
+      
+      apiCaller.searchForUser(name: currentSearchText, page:currentPage) { (result) in
          
          if let users = result.items, !users.isEmpty {
-            self.currentPage = self.apiCaller.currentResultsPage
-            self.totalResultsCount = result.total_count ?? 0
-            self.searchResults.append(contentsOf:users)
+            self.currentSearchData.appendUsers(users)
+            if self.currentSearchData.total_count == nil {
+               self.currentSearchData.total_count = result.total_count
+            }
+            //self.searchResults.append(contentsOf:users)
          }
          performOnMainThreadAsync {
             completion?()
@@ -66,11 +80,8 @@ class Model {
    }
    
    func cleanUserSearchResults() {
-      totalResultsCount = 0
-      currentPage = 1
       currentSearchText = ""
-      searchResults.removeAll()
-      apiCaller.currentResultsPage = 1
+      currentSearchData = UserSearchResultResponse.createEmpty()
    }
    
    func getAvatarForUser(_ user:UserData, completion:imageDownloadBlock?) {
@@ -109,19 +120,43 @@ class Model {
       }
    }
    
-   func getCurrentUserRepositories(completion:repositoriesDownloadBlock?) {
-      apiCaller.searchForRepositoriesOf(currentUser!.login!, completion: completion)
+   func clearCurrentRepositories() {
+      self.repositories.removeAll()
+   }
+   
+   func getCurrentUserRepositories(completion:(()->())?) {
+      guard let userName = currentUser?.login else {
+         completion?()
+         return
+      }
+      apiCaller.searchForRepositoriesOf(userName) { (repositories, error) in
+         if let repos = repositories {
+            self.repositories.append(contentsOf: repos)
+            performOnMainThreadAsync {
+               completion?()
+            }
+         }
+      }
    }
 }
 
 //MARK: -
-struct SearchResultResponse:Decodable {
-   let total_count:Int64?
+struct UserSearchResultResponse:Decodable {
+   var total_count:Int?
    let incomplete_results:Bool?
-   let items:[UserData]?
+   var items:[UserData]?
+
+   static func createEmpty() -> UserSearchResultResponse {
+      return UserSearchResultResponse(total_count: nil, incomplete_results: false, items: nil)
+   }
    
-   static func createEmpty() -> SearchResultResponse{
-      return SearchResultResponse(total_count: nil, incomplete_results: false, items: nil)
+   mutating func appendUsers(_ items:[UserData]) {
+      if let _ = self.items {
+         self.items?.append(contentsOf:items)
+      }
+      else {
+         self.items = items
+      }
    }
 }
 

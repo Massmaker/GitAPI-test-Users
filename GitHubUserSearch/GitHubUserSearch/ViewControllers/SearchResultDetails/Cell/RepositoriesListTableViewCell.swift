@@ -11,7 +11,7 @@ import UIKit
 class RepositoriesListTableViewCell: UITableViewCell {
 
    @IBOutlet weak var ibTitle:UILabel?
-   @IBOutlet weak var ibDesciption:UILabel?
+   @IBOutlet weak var ibDescription:UILabel?
    @IBOutlet weak var ibURLLabel:UILabel?
    
    var isPrivate:Bool = false {
@@ -34,7 +34,7 @@ class RepositoriesListTableViewCell: UITableViewCell {
    
    var descriptionText:String? {
       didSet {
-         ibDesciption?.text = descriptionText
+         ibDescription?.text = descriptionText
       }
    }
    
