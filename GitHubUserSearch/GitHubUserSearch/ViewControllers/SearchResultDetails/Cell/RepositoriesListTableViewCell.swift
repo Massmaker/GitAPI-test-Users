@@ -44,7 +44,7 @@ class RepositoriesListTableViewCell: UITableViewCell {
             isPrivate = aRepo.isPrivate
             titleText = aRepo.name
             descriptionText = aRepo.description
-            urlText = aRepo.html_url
+            urlText = aRepo.htmlURLString
          }
       }
    }

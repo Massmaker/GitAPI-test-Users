@@ -33,14 +33,15 @@ class SearchrResultsController: UIViewController {
    var model:Model {
       return Model.shared
    }
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+   
+   override func viewDidLoad() {
+      super.viewDidLoad()
+      
+      // Uncomment the following line to preserve selection between presentations
+      // self.clearsSelectionOnViewWillAppear = false
+      
+      // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+      // self.navigationItem.rightBarButtonItem = self.editButtonItem
       
       searchController = UISearchController(searchResultsController: nil)
       searchController?.searchResultsUpdater = self
@@ -50,8 +51,7 @@ class SearchrResultsController: UIViewController {
       
       //tableView.keyboardDismissMode = .interactive //when a finger reaches top edge of the kyeboard
       tableView.keyboardDismissMode = .onDrag
-    }
-
+   }
    
    override func viewDidAppear(_ animated: Bool) {
       super.viewDidAppear(animated)
@@ -61,13 +61,13 @@ class SearchrResultsController: UIViewController {
    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
       super.viewWillTransition(to: size, with: coordinator)
       
-      coordinator.animate(alongsideTransition: { (context) in
+      coordinator.animate(alongsideTransition: { _ in
          self.displayLoadingIndicator(false)
-      }) { [weak self] (context) in
+      }, completion: { [weak self] _ in
          if let `self` = self {
             self.setupPerPageResultsInModel()
          }
-      }
+      })
    }
    
    override func viewWillDisappear(_ animated: Bool) {
@@ -83,8 +83,7 @@ class SearchrResultsController: UIViewController {
       self.searchController?.isActive = false
    }
 
-   
-   //MARK: -
+   // MARK: -
    
    private func setupPerPageResultsInModel() {
       tableView.setContentOffset(CGPoint.zero, animated: false)
@@ -98,8 +97,7 @@ class SearchrResultsController: UIViewController {
       if (loading) {
          self.tableView.isUserInteractionEnabled = false
          displayLoadingIndicator(true)
-      }
-      else {
+      } else {
          displayLoadingIndicator(false)
          self.tableView.isUserInteractionEnabled = true
       }
@@ -113,17 +111,16 @@ class SearchrResultsController: UIViewController {
             self.activityIndicator.alpha = 1.0
          })
          activityIndicator.startAnimating()
-      }
-      else {
+      } else {
          activityIndicator.stopAnimating()
          UIView .animate(withDuration: 0.25, delay: 0.5, options: UIViewAnimationOptions.curveLinear, animations: {
             self.activityIndicator.alpha = 0.0
-         }, completion:{ _ in
+         }, completion: { _ in
             self.view.sendSubview(toBack: self.activityIndicator)
          })
       }
    }
-   //MARK: -
+   // MARK: -
 }
 
 extension SearchrResultsController : UITableViewDataSource {
@@ -140,7 +137,6 @@ extension SearchrResultsController : UITableViewDataSource {
       return Model.shared.currentNumberOfUsersFound
    }
    
-   
    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
       let cell = tableView.dequeueReusableCell(withIdentifier: "DefaultCell", for: indexPath)
       
@@ -153,7 +149,7 @@ extension SearchrResultsController : UITableViewDataSource {
 }
 
 extension SearchrResultsController: UITableViewDelegate {
-   //MARK: - UITableViewDelegate
+   // MARK: - UITableViewDelegate
    
    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
       let count = model.currentNumberOfUsersFound
@@ -180,7 +176,6 @@ extension SearchrResultsController: UITableViewDelegate {
    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
       tableView.deselectRow(at: indexPath, animated: true)
       
-      //TODO: implement transfering to User Details view controller
       if let aUser = model.currentSearchData.items?[safe: indexPath.row] {
          model.currentUser = aUser
          self.performSegue(withIdentifier: segueToDetails, sender: nil)
