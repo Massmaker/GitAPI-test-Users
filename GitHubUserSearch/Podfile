@@ -1,0 +1,11 @@
+
+platform :ios, '10.0'
+
+target 'GitHubUserSearch' do
+  
+  use_frameworks!
+
+  # Pods for GitHubUserSearch
+  pod 'SwiftLint'
+
+end
