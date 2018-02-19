@@ -8,12 +8,11 @@
 
 import Foundation
 
-func performOnMainThreadAsync(block:@escaping (()->())){
+func performOnMainThreadAsync(block:@escaping (() -> Void )) {
    DispatchQueue.main.async {
       block()
    }
 }
-
 
 extension Collection {
    

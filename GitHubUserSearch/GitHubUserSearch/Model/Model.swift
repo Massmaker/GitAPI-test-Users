@@ -12,13 +12,16 @@ import UIKit
 class Model {
    
    static var shared:Model {
-      return (UIApplication.shared.delegate as! AppDelegate).model
+      guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
+         return Model()
+      }
+      return appDelegate.model
    }
    
    //search
    
-   var totalResultsCount:Int  {
-      return currentSearchData.total_count ?? 0
+   var totalResultsCount:Int {
+      return currentSearchData.totalCount ?? 0
    }
    //lazy var searchResults:[UserData] = [UserData]()
    lazy var currentSearchData:UserSearchResultResponse = UserSearchResultResponse.createEmpty()
@@ -40,19 +43,19 @@ class Model {
    var currentUser:UserData?
    lazy var repositories:[RepositoryData] = [RepositoryData]()
    
-   //MARK: - memory
+   // MARK: - memory
    
    func didReceiveMemoryWarning() {
       cache.removeAllObjects()
       cleanUserSearchResults()
    }
    
-   //MARK: -
+   // MARK: -
    func setUserSearchResultsPerPage(_ count:Int) {
       apiCaller.usersPerPage = min(count, 40)
    }
-   //MARK: -
-   func searchForUser(name:String, completion:(()->())? ) {
+   // MARK: -
+   func searchForUser(name:String, completion:(() -> Void)? ) {
       if currentSearchText != name {
          cleanUserSearchResults()
          currentSearchText = name
@@ -68,8 +71,8 @@ class Model {
          
          if let users = result.items, !users.isEmpty {
             self.currentSearchData.appendUsers(users)
-            if self.currentSearchData.total_count == nil {
-               self.currentSearchData.total_count = result.total_count
+            if self.currentSearchData.totalCount == nil {
+               self.currentSearchData.totalCount = result.totalCount
             }
             //self.searchResults.append(contentsOf:users)
          }
@@ -111,8 +114,7 @@ class Model {
                      self.cache.setObject(aData as AnyObject, forKey: "\(userId)" as AnyObject)
                   }
                   completion?(anImage, nil)
-               }
-               else if let anError = error {
+               } else if let anError = error {
                   completion?(nil, anError)
                }
             }
@@ -124,7 +126,7 @@ class Model {
       self.repositories.removeAll()
    }
    
-   func getCurrentUserRepositories(completion:(()->())?) {
+   func getCurrentUserRepositories(completion:(() -> Void)?) {
       guard let userName = currentUser?.login else {
          completion?()
          return
@@ -135,28 +137,38 @@ class Model {
             performOnMainThreadAsync {
                completion?()
             }
+         } else if let anError = error {
+            print(anError)
+            performOnMainThreadAsync {
+               completion?()
+            }
          }
       }
    }
 }
 
-//MARK: -
+// MARK: -
 struct UserSearchResultResponse:Decodable {
-   var total_count:Int?
-   let incomplete_results:Bool?
+   var totalCount:Int?
+   let incompleteResults:Bool?
    var items:[UserData]?
 
    static func createEmpty() -> UserSearchResultResponse {
-      return UserSearchResultResponse(total_count: nil, incomplete_results: false, items: nil)
+      return UserSearchResultResponse(totalCount: nil, incompleteResults: false, items: nil)
    }
    
    mutating func appendUsers(_ items:[UserData]) {
-      if let _ = self.items {
+      if self.items != nil {
          self.items?.append(contentsOf:items)
-      }
-      else {
+      } else {
          self.items = items
       }
+   }
+   
+   private enum CodingKeys: String, CodingKey {
+      case totalCount = "total_count"
+      case incompleteResults = "incomplete_results"
+      case items
    }
 }
 
@@ -178,14 +190,14 @@ struct RepositoryData:Decodable {
    var isPrivate:Bool = false
    var name:String?
    var description:String?
-   var html_url:String?
+   var htmlURLString:String?
 
    //custon coding key need to be declared in enum
    private enum CodingKeys: String, CodingKey {
       case isPrivate = "private" // "private" key in JSON will pe mapped to "isPrivate" property of the struct RepositoryData
       case name
       case description
-      case html_url
+      case htmlURLString = "html_url"
    }
 }
 
@@ -199,20 +211,20 @@ enum RequestError:Error {
    
    func errorDescription() -> String {
       switch self {
-         case .unknownError(message: let messageString) :
-            return "Unknown: " + (messageString ?? "No message")
+      case .unknownError(message: let messageString) :
+         return "Unknown: " + (messageString ?? "No message")
          
-         case .wrongData(message: let message) :
-            return "Wrong Data Format: " + message
+      case .wrongData(message: let message) :
+         return "Wrong Data Format: " + message
          
-         case .badURLFormat(message: let message) :
-            return "Bad URL: " + message
+      case .badURLFormat(message: let message) :
+         return "Bad URL: " + message
          
-         case .apiRequestsLimitReached(message: let message) :
-            return "Request Limit Reached: " + message
+      case .apiRequestsLimitReached(message: let message) :
+         return "Request Limit Reached: " + message
          
-         case .resultsLimitReached(message: let message) :
-            return "Limit of results reached: " + message
+      case .resultsLimitReached(message: let message) :
+         return "Limit of results reached: " + message
 //         default:
 //            return "Bad Error"
       }

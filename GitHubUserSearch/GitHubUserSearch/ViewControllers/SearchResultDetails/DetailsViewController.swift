@@ -8,10 +8,7 @@
 
 import UIKit
 
-
-
 class DetailsViewController: UIViewController {
-   
    
    @IBOutlet weak var ibNickName: UILabel!
    @IBOutlet weak var ibAavatar:UIImageView!
@@ -47,8 +44,7 @@ class DetailsViewController: UIViewController {
          
          if let userId = aUser.id {
             ibUserId.text = "ID: " + "\(userId)"
-         }
-         else {
+         } else {
             ibUserId.text = "ID: unknown"
          }
          
@@ -85,8 +81,7 @@ class DetailsViewController: UIViewController {
       
       if let customError = error as? RequestError {
          message = customError.errorDescription()
-      }
-      else {
+      } else {
          let systemError = error as NSError
          message = systemError.localizedDescription
       }
@@ -103,7 +98,7 @@ class DetailsViewController: UIViewController {
 
 extension DetailsViewController : UITableViewDataSource {
    
-   //MARK: - UITableViewDataSource
+   // MARK: - UITableViewDataSource
    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
       return model.repositories.count
    }
@@ -113,8 +108,7 @@ extension DetailsViewController : UITableViewDataSource {
       if let aCell = tableView.dequeueReusableCell(withIdentifier: DetailsViewController.repositoryCellReuseIdentifier, for: indexPath) as? RepositoriesListTableViewCell {
          aCell.repository = model.repositories[safe:indexPath.row]
          return aCell
-      }
-      else {
+      } else {
          return UITableViewCell(style: .default, reuseIdentifier: "Cell")
       }
    }
