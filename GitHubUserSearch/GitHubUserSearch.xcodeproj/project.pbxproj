@@ -140,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				EFABD4E620225F9500D4481E /* Model.swift */,
+				EFC0A44C20419275006D9CCD /* Models */,
 				EFABD4E82022631F00D4481E /* APICaller.swift */,
 			);
 			path = Model;
@@ -152,6 +153,13 @@
 				EFA03C2D202785010003C246 /* Constants.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		EFC0A44C20419275006D9CCD /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

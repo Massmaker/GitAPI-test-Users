@@ -71,16 +71,16 @@ class SearchrResultsController: UIViewController {
    }
    
    override func viewWillDisappear(_ animated: Bool) {
-      searchController?.isActive = false
       super.viewWillDisappear(animated)
+      searchController?.isActive = false
    }
    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
       model.didReceiveMemoryWarning()
-      self.tableView.reloadData()
-      self.searchController?.isActive = false
+      tableView.reloadData()
+      searchController?.isActive = false
    }
 
    // MARK: -
@@ -95,11 +95,11 @@ class SearchrResultsController: UIViewController {
    
    private func setLoading(_ loading:Bool) {
       if (loading) {
-         self.tableView.isUserInteractionEnabled = false
+         tableView.isUserInteractionEnabled = false
          displayLoadingIndicator(true)
       } else {
          displayLoadingIndicator(false)
-         self.tableView.isUserInteractionEnabled = true
+         tableView.isUserInteractionEnabled = true
       }
    }
    
@@ -155,7 +155,7 @@ extension SearchrResultsController: UITableViewDelegate {
       let count = model.currentNumberOfUsersFound
       if indexPath.row == count - 1, model.hasMoreUsersToLoad {
          
-         self.setLoading(true)
+         setLoading(true)
          
          var insets = self.tableView.contentInset
          insets.bottom = 60.0
@@ -178,7 +178,7 @@ extension SearchrResultsController: UITableViewDelegate {
       
       if let aUser = model.currentSearchData.items?[safe: indexPath.row] {
          model.currentUser = aUser
-         self.performSegue(withIdentifier: segueToDetails, sender: nil)
+         performSegue(withIdentifier: segueToDetails, sender: nil)
       }
    }
 }
@@ -188,7 +188,6 @@ extension SearchrResultsController:UISearchResultsUpdating {
    func updateSearchResults(for searchController: UISearchController) {
       if let aText = searchController.searchBar.text, aText.count > 3 {
          
-         print("searching : \(aText)")
          setLoading(true)
          tableView.setContentOffset(CGPoint.zero, animated: false)
          

@@ -20,7 +20,7 @@ class Model {
    
    //search
    
-   var totalResultsCount:Int {
+   var totalResultsCount: Int {
       return currentSearchData.totalCount ?? 0
    }
    //lazy var searchResults:[UserData] = [UserData]()
